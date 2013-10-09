@@ -5,7 +5,7 @@
 
 // But in stead we're going to implement it from scratch:
 var getElementsByClassName = function (className) {
-  var nodes = document.body.childNodes; 
+  
   var results = [];
 
   var searchChildren = function(children) {
@@ -19,15 +19,14 @@ var getElementsByClassName = function (className) {
 	  		}
 	  	}
 	  	// then test if it has children
-	  	if (node.childNodes) {
-	  		// if so, execute recursive search on child
+	  	if (node.childNodes.length) {
+	  		// if so, execute recursive search on the children
 	  		searchChildren(node.childNodes);
 	  	}
 	  })
 	}
-
 	//initiate search
-	searchChildren(nodes);
+	searchChildren(document.body.childNodes);
 
   return results;
 };
