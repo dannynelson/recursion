@@ -8,22 +8,22 @@ var stringifyJSON = function (obj) {
   // loop through each and wrap in brackets
   if (Array.isArray(obj)) {
   	var stringified = [];
-  	for (var i = 0; i <  obj.length; i++) {
-  		stringified.push(stringifyJSON(obj[i])); 
-  	}
+  	_(obj).each(function(value) {
+      stringified.push(stringifyJSON(value)); 
+    })
   	return ("[" + stringified.join(",") + "]"); 
 
   // test for object (and make sure it is not null)
   // loop, wrap keys in "", and wrap in quotation marks
   } else if (typeof(obj) === "object" && obj !== null) {
   	var stringified = '{'
-  	for (var key in obj) {
+  	_(obj).each(function(value, key) {
   		//check for illegal values (function or undefined)
-  		if (typeof(obj[key]) !== "function" && typeof(obj[key]) !== "undefined") {
+  		if (typeof(value) !== "function" && typeof(value) !== "undefined") {
   			stringified += ('"' + String(key) + '":');
-  			stringified += ( stringifyJSON(obj[key]) + ',' );
+  			stringified += ( stringifyJSON(value) + ',' );
   		}
-  	}
+  	})
   	if (stringified[stringified.length - 1] === ',') { //remove last comma if it exists
   		stringified = stringified.slice(0,-1); 
   	}
