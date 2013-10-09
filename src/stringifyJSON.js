@@ -3,20 +3,37 @@
 
 // but you don't so you're going to have to write it from scratch:
 var stringifyJSON = function (obj) {
-  // your code goes here
+
+  // test for array 
+  // loop through each and wrap in brackets
   if (Array.isArray(obj)) {
-  	//TODO: Test for embedded arrays
   	var stringified = [];
   	for (var i = 0; i <  obj.length; i++) {
-  		if (Array.isArray(obj[i])) { //if it is an embedded array
-  			stringified.push(stringifyJSON(obj[i])); //recursive function
-  		} else if (typeof(obj[i]) === "string") { //if it is already a string, add quotes
-  			stringified.push('"' + obj[i] + '"');
-  		} else { //otherwise, just convert to string
-  			stringified.push(String(obj[i]));
-  		}
-  		//join, add brackets (quotes already included b/c it is a string)
+  		stringified.push(stringifyJSON(obj[i])); 
   	}
   	return ("[" + stringified.join(",") + "]"); 
-  } 
+
+  // test for object (and make sure it is not null)
+  // loop, wrap keys in "", and wrap in quotation marks
+  } else if (typeof(obj) === "object" && obj !== null) {
+  	var stringified = '{'
+  	for (var key in obj) {
+  		stringified += ('"' + String(key) + '":');
+  		stringified += ( stringifyJSON(obj[key]) + ',' );
+  	}
+  	if (stringified[stringified.length - 1] === ',') { //remove last comma
+  		stringified = stringified.slice(0,-1); 
+  	}
+  	return (stringified += '}');
+
+  // test if it is a string, 
+  // wrap in quotation marks
+  } else if (typeof(obj) === "string") {
+  	return ('"' + obj + '"');
+
+  // otherwise it is a number, function, boolean, undefined, or null
+  // convert to string
+  } else {
+  	return String(obj);
+  }
 };
