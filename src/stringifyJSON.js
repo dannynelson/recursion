@@ -18,10 +18,13 @@ var stringifyJSON = function (obj) {
   } else if (typeof(obj) === "object" && obj !== null) {
   	var stringified = '{'
   	for (var key in obj) {
-  		stringified += ('"' + String(key) + '":');
-  		stringified += ( stringifyJSON(obj[key]) + ',' );
+  		//check for illegal values (function or undefined)
+  		if (typeof(obj[key]) !== "function" && typeof(obj[key]) !== "undefined") {
+  			stringified += ('"' + String(key) + '":');
+  			stringified += ( stringifyJSON(obj[key]) + ',' );
+  		}
   	}
-  	if (stringified[stringified.length - 1] === ',') { //remove last comma
+  	if (stringified[stringified.length - 1] === ',') { //remove last comma if it exists
   		stringified = stringified.slice(0,-1); 
   	}
   	return (stringified += '}');
