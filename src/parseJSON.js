@@ -16,51 +16,60 @@ var parseJSON = function (json) {
 		//call function and integrate it into construct
   var array = json.split('');
   var i = 0
+  var exists = function(element) {
+  	if (array[i] === element) {
+  		i++;
+  		return true;
+  	} else {
+  		return false;
+  	}
+  }
+  // var exists = function(elements) {
+  // 	var result = false;
+  // 	_(arguments).each(function(arg) {
+	 //  	if (array[i] === arg) {
+	 //  		i++;
+	 //  		result = true;
+	 //  	}
+  // 	})
+  // 	return result;
+  // }
 
   var testNext = function(token) {
-  	//made some changes
   	// test for array
-	  if (/\[/.test(token)) {
+		if (exists("[")) {
 	  	var arr = [];
-	  	i++;
 	  	while (array[i] !== undefined) {
-	  		if (array[i] === ",") {
-	  			i++;
-	  		} else if (array[i] === "]") {
-	  			i++;
-	  			break;
-	  		} else {
-	  			arr.push(testNext(array[i]));
-	  		}
+	  		if (exists("]")) break;
+	  		arr.push(testNext(array[i]));
+	  		if (exists("]")) break;
+	  		if (!exists(",")) throw Error("missing comma");
+	  		exists(" ");
 	  	}
 	  	return arr;
-	  } else if (/\{/.test(token)) {
+	  } else if (exists("{")) {
 	  	var obj = {};
-	  	i++;
 	  	while (array[i] !== undefined) {
-	  		if (array[i] === "}") {
-	  			i++;
-	  			break;
-	  		}
+	  		if (exists("}")) break;
 	  		var key = testNext(array[i]);
-	  		i++; // skip the :
+	  		if (!exists(":")) throw Error("missing semicolon");
+	  		exists(" ");
 	  		var value = testNext(array[i]);
-	  		if (array[i] === ",") i++;
 	  		obj[key] = value;
+	  		if (exists("}")) break;
+	  		if (!exists(",")) throw Error("missing comma");
+	  		exists(" ");
 	  	}
 	  	return obj;
-	  } else if (/"/.test(token)) {
+	  } else if (exists('"')) {
 			var string = "";
-			i++;
 			var testForLetter = function(nextToken) {
-				if (nextToken === '"') {
-					i++;
-					return;
-				} else { //otherwise it is closing 
-					string += nextToken;
-					i++;
-					testForLetter(array[i]);
-				}
+				if (exists('"')) return;
+				//keep it simple for now:
+				if (/\\/.test(nextToken)) throw Error("illegal backslash");
+				string += nextToken;
+				i++;
+				testForLetter(array[i]);
 			}
 			testForLetter(array[i]);
 			return string;
