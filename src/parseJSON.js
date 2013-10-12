@@ -18,9 +18,10 @@ var parseJSON = function (json) {
   var i = 0
 
   var testNext = function(token) {
+  	//made some changes
   	// test for array
 	  if (/\[/.test(token)) {
-	  	var arr = []
+	  	var arr = [];
 	  	i++;
 	  	while (array[i] !== undefined) {
 	  		if (array[i] === ",") {
@@ -33,10 +34,7 @@ var parseJSON = function (json) {
 	  		}
 	  	}
 	  	return arr;
-	  }
-	  
-	  //test for object
-	  if (/\{/.test(token)) {
+	  } else if (/\{/.test(token)) {
 	  	var obj = {};
 	  	i++;
 	  	while (array[i] !== undefined) {
@@ -51,10 +49,7 @@ var parseJSON = function (json) {
 	  		obj[key] = value;
 	  	}
 	  	return obj;
-	  }
-
-		//test for string
-		if (/"/.test(token)) {
+	  } else if (/"/.test(token)) {
 			var string = "";
 			i++;
 			var testForLetter = function(nextToken) {
@@ -69,10 +64,7 @@ var parseJSON = function (json) {
 			}
 			testForLetter(array[i]);
 			return string;
-		}
-
-		//test for number
-		if (/[\-\d]/.test(token)) {
+		} else if (/[\-\d]/.test(token)) {
 			var isFloat = false;
 			var number = "";
 			var testForNumber = function(nextToken) {
@@ -86,22 +78,16 @@ var parseJSON = function (json) {
 			testForNumber(array[i]);
 			number = (isFloat ? parseFloat(number) : parseInt(number));
 			return number;
-		}
-
-		//test for true / false / null / undefined
-		if (/t/.test(token)) {
+		} else if (/t/.test(token)) {
 			i += 4; //skip past all letters of true
 			return true;
-		}
-		if (/f/.test(token)) {
+		} else if (/f/.test(token)) {
 			i += 5;
 			return false;
-		}
-		if (/n/.test(token)) {
+		} else if (/n/.test(token)) {
 			i += 4;
 			return null;
-		}
-		if (/u/.test(token)) {
+		} else if (/u/.test(token)) {
 			i += 9;
 			return undefined;
 		}
