@@ -90,9 +90,11 @@ var parseJSON = function (json) {
 		} else if (/u/.test(token)) {
 			i += 9;
 			return undefined;
+		//error for unexpected ending (ie no closing bracket), or invalid input
+		} else {
+			throw Error("invalid input");
 		}
-		i++;
 	}
-	console.log(testNext(array[i]));
+	//console.log was screwing everything up??? why??
 	return testNext(array[i]);
 };

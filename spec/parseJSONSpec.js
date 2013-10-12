@@ -3,8 +3,10 @@ describe("parseJSON", function(){
 
   it("should match the result of calling JSON.parse", function(){
     validObjects.forEach(function(obj){
+      var original = JSON.parse(JSON.stringify(obj))
       var result = parseJSON(JSON.stringify(obj));
-      var equality = _.isEqual(result, obj); // why can't we use `===` here?
+      var equality = _.isEqual(result, original); // why can't we use `===` here?
+      // var equality = _.isEqual(result, obj); // why can't we use `===` here?
       expect(equality).toBeTruthy();
     });
 
