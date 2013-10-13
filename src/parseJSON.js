@@ -16,7 +16,8 @@ var parseJSON = function (json) {
 		//call function and integrate it into construct
   var array = json.split('');
   var i = 0
-  var exists = function(element) {
+
+  var testFor = function(element) {
   	if (array[i] === element) {
   		i++;
   		return true;
@@ -24,47 +25,38 @@ var parseJSON = function (json) {
   		return false;
   	}
   }
-  // var exists = function(elements) {
-  // 	var result = false;
-  // 	_(arguments).each(function(arg) {
-	 //  	if (array[i] === arg) {
-	 //  		i++;
-	 //  		result = true;
-	 //  	}
-  // 	})
-  // 	return result;
-  // }
-
+  
   var testNext = function(token) {
-  	// test for array
-		if (exists("[")) {
+		if (testFor("[")) {
 	  	var arr = [];
 	  	while (array[i] !== undefined) {
-	  		if (exists("]")) break;
+	  		if (testFor("]")) break;
 	  		arr.push(testNext(array[i]));
-	  		if (exists("]")) break;
-	  		if (!exists(",")) throw Error("missing comma");
-	  		exists(" ");
+	  		if (testFor("]")) break;
+	  		if (!testFor(",")) throw Error("missing comma");
+	  		testFor(" ");
 	  	}
 	  	return arr;
-	  } else if (exists("{")) {
+	  }
+	  if (testFor("{")) {
 	  	var obj = {};
 	  	while (array[i] !== undefined) {
-	  		if (exists("}")) break;
+	  		if (testFor("}")) break;
 	  		var key = testNext(array[i]);
-	  		if (!exists(":")) throw Error("missing semicolon");
-	  		exists(" ");
+	  		if (!testFor(":")) throw Error("missing semicolon");
+	  		testFor(" ");
 	  		var value = testNext(array[i]);
 	  		obj[key] = value;
-	  		if (exists("}")) break;
-	  		if (!exists(",")) throw Error("missing comma");
-	  		exists(" ");
+	  		if (testFor("}")) break;
+	  		if (!testFor(",")) throw Error("missing comma");
+	  		testFor(" ");
 	  	}
 	  	return obj;
-	  } else if (exists('"')) {
+	  }
+	  if (testFor('"')) {
 			var string = "";
 			var testForLetter = function(nextToken) {
-				if (exists('"')) return;
+				if (testFor('"')) return;
 				//keep it simple for now:
 				if (/\\/.test(nextToken)) throw Error("illegal backslash");
 				string += nextToken;
@@ -73,7 +65,8 @@ var parseJSON = function (json) {
 			}
 			testForLetter(array[i]);
 			return string;
-		} else if (/[\-\d]/.test(token)) {
+		}
+		if (/[\-\d]/.test(token)) {
 			var isFloat = false;
 			var number = "";
 			var testForNumber = function(nextToken) {
@@ -87,22 +80,25 @@ var parseJSON = function (json) {
 			testForNumber(array[i]);
 			number = (isFloat ? parseFloat(number) : parseInt(number));
 			return number;
-		} else if (/t/.test(token)) {
+		}
+		if (/t/.test(token)) {
 			i += 4; //skip past all letters of true
 			return true;
-		} else if (/f/.test(token)) {
+		}
+		if (/f/.test(token)) {
 			i += 5;
 			return false;
-		} else if (/n/.test(token)) {
+		}
+		if (/n/.test(token)) {
 			i += 4;
 			return null;
-		} else if (/u/.test(token)) {
+		}
+		if (/u/.test(token)) {
 			i += 9;
 			return undefined;
-		//error for unexpected ending (ie no closing bracket), or invalid input
-		} else {
-			throw Error("invalid input");
 		}
+		//error for unexpected ending (ie no closing bracket), or invalid input
+		throw Error("invalid input");
 	}
 	//console.log was screwing everything up??? why??
 	return testNext(array[i]);
